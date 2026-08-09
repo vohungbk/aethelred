@@ -72,9 +72,11 @@ export default function CartPage() {
 
       <div className="border-border flex flex-col items-end gap-4 border-t pt-6">
         <p className="text-heading-3 text-text-primary">Subtotal: {formatPrice(subtotal)}</p>
-        <Button type="button" variant="solid" disabled>
-          Checkout (Coming Soon)
-        </Button>
+        <Link href="/checkout">
+          <Button type="button" variant="solid">
+            Checkout
+          </Button>
+        </Link>
       </div>
     </Container>
   );
