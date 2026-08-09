@@ -1,26 +1,215 @@
 @import "tailwindcss";
 
+/* ---- TIER 1: PRIMITIVES (raw palette, never referenced directly in components) ---- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --clr-cream-50: #fdfbf7;
+  --clr-cream-100: #f3efea;
+  --clr-ink-900: #1a1a1a;
+  --clr-ink-700: #4a4a4a;
+  --clr-ink-500: #757575;
+  --clr-ink-300: #b0b0b0;
+  --clr-forest-900: #1e2b25;
+  --clr-gold-500: #c4a468;
+  --clr-line-200: #e0d9ce;
+  --clr-success-light: #2d5a27;
+  --clr-warning-light: #b8860b;
+  --clr-error-light: #8b0000;
+  --clr-info-light: #2f4f4f;
+
+  --clr-midnight-950: #0a111e;
+  --clr-midnight-900: #121e31;
+  --clr-midnight-800: #1a2a43;
+  --clr-gold-400: #d4b478;
+  --clr-gold-300: #e5c589;
+  --clr-gold-600: #c3a367;
+  --clr-cloud-100: #f0ece1;
+  --clr-cloud-300: #c0c8d4;
+  --clr-cloud-500: #7a8a9e;
+  --clr-cloud-700: #435266;
+  --clr-line-dark-200: #20314a;
+  --clr-success-dark: #408060;
+  --clr-warning-dark: #d4a017;
+  --clr-error-dark: #c04040;
+  --clr-info-dark: #4682b4;
 }
 
+/* ---- TIER 2: SEMANTIC TOKENS — light (default) ---- */
+:root {
+  --bg: var(--clr-cream-50);
+  --surface: var(--clr-cream-100);
+  --primary: var(--clr-forest-900);
+  --accent-gold: var(--clr-gold-500);
+
+  --text-primary: var(--clr-ink-900);
+  --text-secondary: var(--clr-ink-700);
+  --text-muted: var(--clr-ink-500);
+  --text-disabled: var(--clr-ink-300);
+
+  --border: var(--clr-line-200);
+  --input-bg: #ffffff;
+
+  --btn-bg: #1a1a1a;
+  --btn-bg-hover: #333333;
+  --btn-bg-active: #000000;
+  --btn-bg-disabled: #e5e5e5;
+  --btn-text: var(--clr-cream-50);
+  --btn-text-disabled: #a0a0a0;
+
+  --link: var(--clr-ink-900);
+  --link-hover: var(--clr-gold-500);
+
+  --status-success: var(--clr-success-light);
+  --status-warning: var(--clr-warning-light);
+  --status-error: var(--clr-error-light);
+  --status-info: var(--clr-info-light);
+
+  /* accessibility-safe gold usage: never use --accent-gold for essential/small text */
+  --accent-gold-text: var(--clr-ink-900);
+  --accent-gold-large: var(--clr-gold-500);
+}
+
+[data-theme="dark"] {
+  --bg: var(--clr-midnight-950);
+  --surface: var(--clr-midnight-900);
+  --primary: var(--clr-midnight-800);
+  --accent-gold: var(--clr-gold-400);
+
+  --text-primary: var(--clr-cloud-100);
+  --text-secondary: var(--clr-cloud-300);
+  --text-muted: var(--clr-cloud-500);
+  --text-disabled: var(--clr-cloud-700);
+
+  --border: var(--clr-line-dark-200);
+  --input-bg: #0f1a2b;
+
+  --btn-bg: var(--clr-gold-400);
+  --btn-bg-hover: var(--clr-gold-300);
+  --btn-bg-active: var(--clr-gold-600);
+  --btn-bg-disabled: #1d2a3d;
+  --btn-text: var(--clr-midnight-950);
+  --btn-text-disabled: var(--clr-cloud-700);
+
+  --link: var(--clr-cloud-100);
+  --link-hover: var(--clr-gold-400);
+
+  --status-success: var(--clr-success-dark);
+  --status-warning: var(--clr-warning-dark);
+  --status-error: var(--clr-error-dark);
+  --status-info: var(--clr-info-dark);
+
+  --accent-gold-text: var(--clr-cloud-100);
+  --accent-gold-large: var(--clr-gold-400);
+}
+
+/* ---- TIER 3: TAILWIND THEME MAPPING (v4 CSS-first) ---- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-primary: var(--primary);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-gold-text: var(--accent-gold-text);
+  --color-accent-gold-large: var(--accent-gold-large);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-disabled: var(--text-disabled);
+
+  --color-border: var(--border);
+  --color-input-bg: var(--input-bg);
+
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-bg-hover: var(--btn-bg-hover);
+  --color-btn-bg-active: var(--btn-bg-active);
+  --color-btn-bg-disabled: var(--btn-bg-disabled);
+  --color-btn-text: var(--btn-text);
+  --color-btn-text-disabled: var(--btn-text-disabled);
+
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
+
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-error: var(--status-error);
+  --color-status-info: var(--status-info);
+
+  --font-display: var(--font-noto-sans);
+  --font-sans: var(--font-noto-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+  }
+
+  ::selection {
+    background-color: var(--color-accent-gold);
+    color: var(--color-primary);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ---- Typography scale (Section 5 of the implementation plan) ---- */
+@layer components {
+  .text-display {
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 1.375rem;
+  }
+
+  .text-display-h1 {
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    font-size: clamp(1.875rem, 1.4rem + 2vw, 2.875rem);
+  }
+
+  .text-heading-2 {
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+  }
+
+  .text-heading-3 {
+    font-weight: 600;
+    letter-spacing: 0;
+    font-size: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+  }
+
+  .text-body {
+    font-weight: 400;
+    line-height: 1.6;
+    font-size: 1rem;
+  }
+
+  .text-meta {
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    font-size: 0.8125rem;
+  }
+
+  .text-nav {
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+    font-size: 0.8125rem;
+  }
+
+  .text-price {
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    font-size: 1rem;
+  }
+
+  .text-button {
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    font-size: 0.8125rem;
+  }
 }
