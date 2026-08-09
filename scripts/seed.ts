@@ -7,6 +7,27 @@ import { Variant } from "../lib/models/Variant";
 
 config({ path: ".env.local" });
 
+interface VariantSeed {
+  skuSuffix: string;
+  attributes: { fabric?: string; finish?: string; size?: string; legColor?: string };
+  priceDelta: number;
+  leadTimeDays?: number;
+}
+
+interface ProductSeed {
+  slug: string;
+  name: string;
+  descriptor: string;
+  description: string;
+  collectionSlug: string;
+  category: string;
+  basePrice: number;
+  featured?: boolean;
+  featuredOrder?: number;
+  isCustomizable?: boolean;
+  variants?: VariantSeed[];
+}
+
 const collections = [
   {
     slug: "sofas",
@@ -40,7 +61,7 @@ const collections = [
   },
 ];
 
-const products = [
+const products: ProductSeed[] = [
   {
     slug: "elara-chaise",
     name: "The Elara Chaise",
@@ -52,6 +73,17 @@ const products = [
     basePrice: 1250000,
     featured: true,
     featuredOrder: 1,
+    isCustomizable: true,
+    variants: [
+      { skuSuffix: "velvet-navy", attributes: { fabric: "Velvet — Navy" }, priceDelta: 0 },
+      { skuSuffix: "velvet-forest", attributes: { fabric: "Velvet — Forest" }, priceDelta: 0 },
+      {
+        skuSuffix: "boucle-cream",
+        attributes: { fabric: "Bouclé — Cream" },
+        priceDelta: 45000,
+        leadTimeDays: 49,
+      },
+    ],
   },
   {
     slug: "orion-credenza",
@@ -92,6 +124,15 @@ const products = [
     collectionSlug: "armchairs",
     category: "armchair",
     basePrice: 680000,
+    isCustomizable: true,
+    variants: [
+      { skuSuffix: "leather-cognac", attributes: { fabric: "Leather — Cognac" }, priceDelta: 0 },
+      {
+        skuSuffix: "leather-charcoal",
+        attributes: { fabric: "Leather — Charcoal" },
+        priceDelta: 0,
+      },
+    ],
   },
   {
     slug: "merrow-armchair",
@@ -110,6 +151,11 @@ const products = [
     collectionSlug: "tables",
     category: "table",
     basePrice: 990000,
+    isCustomizable: true,
+    variants: [
+      { skuSuffix: "84in", attributes: { size: '84" L' }, priceDelta: 0 },
+      { skuSuffix: "108in", attributes: { size: '108" L' }, priceDelta: 220000, leadTimeDays: 56 },
+    ],
   },
   {
     slug: "cove-side-table",
@@ -149,14 +195,41 @@ async function seed() {
   const collectionIdBySlug = new Map(collectionDocs.map((doc) => [doc.slug, doc._id]));
 
   const productDocs = await Product.insertMany(
-    products.map(({ collectionSlug, ...product }) => ({
-      ...product,
-      collectionId: collectionIdBySlug.get(collectionSlug),
+    products.map((product) => ({
+      slug: product.slug,
+      name: product.name,
+      descriptor: product.descriptor,
+      description: product.description,
+      category: product.category,
+      basePrice: product.basePrice,
+      featured: product.featured,
+      featuredOrder: product.featuredOrder,
+      isCustomizable: product.isCustomizable,
+      collectionId: collectionIdBySlug.get(product.collectionSlug),
       status: "published",
     })),
   );
+  const productIdBySlug = new Map(productDocs.map((doc) => [doc.slug, doc._id]));
 
-  console.log(`Seeded ${collectionDocs.length} collections and ${productDocs.length} products.`);
+  const variantDocs = products.flatMap((product) =>
+    (product.variants ?? []).map((variant) => ({
+      productId: productIdBySlug.get(product.slug),
+      sku: `${product.slug}-${variant.skuSuffix}`,
+      attributes: variant.attributes,
+      priceDelta: variant.priceDelta,
+      fulfillmentType: "made-to-order" as const,
+      inStock: true,
+      leadTimeDays: variant.leadTimeDays ?? 35,
+    })),
+  );
+
+  if (variantDocs.length > 0) {
+    await Variant.insertMany(variantDocs);
+  }
+
+  console.log(
+    `Seeded ${collectionDocs.length} collections, ${productDocs.length} products, and ${variantDocs.length} variants.`,
+  );
 
   await mongoose.disconnect();
 }

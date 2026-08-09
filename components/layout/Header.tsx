@@ -1,14 +1,15 @@
 import Link from "next/link";
+import { CartIconLink } from "@/components/features/cart/CartIconLink";
 import { CollectionsDropdown } from "@/components/features/navigation/CollectionsDropdown";
 import { MobileNav } from "@/components/features/navigation/MobileNav";
 import { ThemeToggle } from "@/components/features/theme/ThemeToggle";
 import { Container } from "@/components/ui/Container";
 import { IconLink } from "@/components/ui/IconLink";
 import { Logo } from "@/components/ui/Logo";
-import { BagIcon, SearchIcon, UserIcon } from "@/components/ui/icons";
+import { SearchIcon, UserIcon } from "@/components/ui/icons";
 import { mockCollections } from "@/lib/mock/collections";
 
-export function Header({ cartCount = 0 }: { cartCount?: number }) {
+export function Header() {
   return (
     <header className="border-border bg-bg sticky top-0 z-30 border-b">
       <Container>
@@ -44,14 +45,10 @@ export function Header({ cartCount = 0 }: { cartCount?: number }) {
               <IconLink href="/account" label="Account">
                 <UserIcon className="h-5 w-5" />
               </IconLink>
-              <IconLink href="/cart" label="Shopping bag" badge={cartCount}>
-                <BagIcon className="h-5 w-5" />
-              </IconLink>
+              <CartIconLink />
               <ThemeToggle />
             </div>
-            <IconLink href="/cart" label="Shopping bag" badge={cartCount} className="lg:hidden">
-              <BagIcon className="h-5 w-5" />
-            </IconLink>
+            <CartIconLink className="lg:hidden" />
           </div>
         </div>
       </Container>

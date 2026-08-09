@@ -1,8 +1,10 @@
 import { dbConnect } from "@/lib/db/connect";
 import { Collection } from "@/lib/models/Collection";
 import { Product } from "@/lib/models/Product";
+import { Variant } from "@/lib/models/Variant";
 import { toProductSummary } from "@/lib/serializers/product";
-import type { ProductSummary } from "@/types/product";
+import { toProductVariantOption } from "@/lib/serializers/variant";
+import type { ProductDetail, ProductSummary } from "@/types/product";
 
 export type ProductSort = "featured" | "price-asc" | "price-desc" | "newest";
 
@@ -52,4 +54,20 @@ export async function getFeaturedProducts(limit = 3): Promise<ProductSummary[]> 
     .limit(limit)
     .lean();
   return docs.map(toProductSummary);
+}
+
+export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
+  await dbConnect();
+
+  const doc = await Product.findOne({ slug, status: "published" }).lean();
+  if (!doc) return null;
+
+  const variantDocs = await Variant.find({ productId: doc._id }).lean();
+
+  return {
+    ...toProductSummary(doc),
+    description: doc.description,
+    category: doc.category,
+    variants: variantDocs.map(toProductVariantOption),
+  };
 }
