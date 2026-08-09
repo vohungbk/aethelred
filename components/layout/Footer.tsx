@@ -6,7 +6,7 @@ import { footerColumns, socialLinks } from "@/lib/constants/footer";
 
 export function Footer() {
   return (
-    <footer data-theme="dark" className="bg-bg mt-24">
+    <footer className="bg-surface border-border mt-24 border-t">
       <Container className="flex flex-col gap-12 py-16">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {footerColumns.map((column) => (
