@@ -1,0 +1,167 @@
+import { config } from "dotenv";
+import mongoose from "mongoose";
+import { dbConnect } from "../lib/db/connect";
+import { Collection } from "../lib/models/Collection";
+import { Product } from "../lib/models/Product";
+import { Variant } from "../lib/models/Variant";
+
+config({ path: ".env.local" });
+
+const collections = [
+  {
+    slug: "sofas",
+    name: "Sofas & Sectionals",
+    description: "Tailored silhouettes built for daily ease and lasting comfort.",
+    sortOrder: 1,
+  },
+  {
+    slug: "armchairs",
+    name: "Armchairs",
+    description: "Single-seat pieces that anchor a room with quiet presence.",
+    sortOrder: 2,
+  },
+  {
+    slug: "tables",
+    name: "Tables",
+    description: "Dining, side, and coffee tables shaped from solid hardwood and stone.",
+    sortOrder: 3,
+  },
+  {
+    slug: "lighting",
+    name: "Lighting",
+    description: "Sculptural fixtures that pair brass and hand-blown glass.",
+    sortOrder: 4,
+  },
+  {
+    slug: "case-goods",
+    name: "Case Goods",
+    description: "Credenzas, cabinets, and storage pieces finished by hand.",
+    sortOrder: 5,
+  },
+];
+
+const products = [
+  {
+    slug: "elara-chaise",
+    name: "The Elara Chaise",
+    descriptor: "Sculptural Comfort",
+    description:
+      "A sculptural chaise upholstered in deep velvet, finished with a solid brass base.",
+    collectionSlug: "sofas",
+    category: "sofa",
+    basePrice: 1250000,
+    featured: true,
+    featuredOrder: 1,
+  },
+  {
+    slug: "orion-credenza",
+    name: "The Orion Credenza",
+    descriptor: "Hand-Carved Texture",
+    description: "A hand-carved oak credenza with a fluted door front and brass hardware.",
+    collectionSlug: "case-goods",
+    category: "case-goods",
+    basePrice: 1890000,
+    featured: true,
+    featuredOrder: 2,
+  },
+  {
+    slug: "lyra-pendant",
+    name: "The Lyra Pendant",
+    descriptor: "Illuminated Artistry",
+    description: "A hand-blown glass pendant suspended from a slender brass stem.",
+    collectionSlug: "lighting",
+    category: "lighting",
+    basePrice: 950000,
+    featured: true,
+    featuredOrder: 3,
+  },
+  {
+    slug: "wyndham-sofa",
+    name: "The Wyndham Sofa",
+    descriptor: "Tailored Ease",
+    description: "A three-seat sofa with a tight back and deep, feather-wrapped cushions.",
+    collectionSlug: "sofas",
+    category: "sofa",
+    basePrice: 1450000,
+  },
+  {
+    slug: "alden-armchair",
+    name: "The Alden Armchair",
+    descriptor: "Quiet Presence",
+    description: "A swivel armchair in brushed leather with a solid walnut frame.",
+    collectionSlug: "armchairs",
+    category: "armchair",
+    basePrice: 680000,
+  },
+  {
+    slug: "merrow-armchair",
+    name: "The Merrow Armchair",
+    descriptor: "Sculpted Comfort",
+    description: "A curved-back armchair upholstered in boucle with tapered brass legs.",
+    collectionSlug: "armchairs",
+    category: "armchair",
+    basePrice: 720000,
+  },
+  {
+    slug: "halden-dining-table",
+    name: "The Halden Dining Table",
+    descriptor: "Solid Hardwood",
+    description: "A dining table in solid white oak with a live-edge detail.",
+    collectionSlug: "tables",
+    category: "table",
+    basePrice: 990000,
+  },
+  {
+    slug: "cove-side-table",
+    name: "The Cove Side Table",
+    descriptor: "Sculpted Stone",
+    description: "A side table carved from a single block of honed marble.",
+    collectionSlug: "tables",
+    category: "table",
+    basePrice: 340000,
+  },
+  {
+    slug: "solene-pendant",
+    name: "The Solene Pendant",
+    descriptor: "Warm Glow",
+    description: "A ribbed glass pendant with a warm, dimmable brass fitting.",
+    collectionSlug: "lighting",
+    category: "lighting",
+    basePrice: 410000,
+  },
+  {
+    slug: "marlowe-cabinet",
+    name: "The Marlowe Cabinet",
+    descriptor: "Hand-Finished Storage",
+    description: "A tall cabinet in smoked oak with brass pulls and adjustable shelving.",
+    collectionSlug: "case-goods",
+    category: "case-goods",
+    basePrice: 1620000,
+  },
+];
+
+async function seed() {
+  await dbConnect();
+
+  await Promise.all([Collection.deleteMany({}), Product.deleteMany({}), Variant.deleteMany({})]);
+
+  const collectionDocs = await Collection.insertMany(collections);
+  const collectionIdBySlug = new Map(collectionDocs.map((doc) => [doc.slug, doc._id]));
+
+  const productDocs = await Product.insertMany(
+    products.map(({ collectionSlug, ...product }) => ({
+      ...product,
+      collectionId: collectionIdBySlug.get(collectionSlug),
+      status: "published",
+    })),
+  );
+
+  console.log(`Seeded ${collectionDocs.length} collections and ${productDocs.length} products.`);
+
+  await mongoose.disconnect();
+}
+
+seed().catch((error: unknown) => {
+  console.error(error);
+  process.exit(1);
+});

@@ -1,7 +1,4 @@
-export interface CollectionSummary {
-  slug: string;
-  name: string;
-}
+import type { CollectionSummary } from "@/types/collection";
 
 export const mockCollections: CollectionSummary[] = [
   { slug: "sofas", name: "Sofas & Sectionals" },

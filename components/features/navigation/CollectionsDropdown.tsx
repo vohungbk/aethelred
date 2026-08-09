@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDownIcon } from "@/components/ui/icons";
-import type { CollectionSummary } from "@/lib/mock/collections";
+import type { CollectionSummary } from "@/types/collection";
 
 export function CollectionsDropdown({ collections }: { collections: CollectionSummary[] }) {
   const [open, setOpen] = useState(false);
