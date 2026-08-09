@@ -23,7 +23,7 @@ const colorTokens = [
 
 export default function DesignSystemPage() {
   return (
-    <main className="bg-bg min-h-screen py-16">
+    <div className="py-16">
       <Container className="flex flex-col gap-16">
         <header className="flex items-center justify-between">
           <h1 className="text-display-h1">Design System</h1>
@@ -99,6 +99,6 @@ export default function DesignSystemPage() {
           <Divider />
         </section>
       </Container>
-    </main>
+    </div>
   );
 }
