@@ -1,5 +1,8 @@
 "use server";
 
+import { dbConnect } from "@/lib/db/connect";
+import { NewsletterSubscriber } from "@/lib/models/NewsletterSubscriber";
+
 export interface NewsletterFormState {
   status: "idle" | "success" | "error";
   message?: string;
@@ -11,14 +14,20 @@ export async function subscribeToNewsletter(
   _prevState: NewsletterFormState,
   formData: FormData,
 ): Promise<NewsletterFormState> {
-  const email = String(formData.get("email") ?? "").trim();
+  const email = String(formData.get("email") ?? "")
+    .toLowerCase()
+    .trim();
 
   if (!EMAIL_PATTERN.test(email)) {
     return { status: "error", message: "Enter a valid email address." };
   }
 
-  // Simulated for Phase 2 — Phase 7 wires this to the NewsletterSubscriber model.
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  await dbConnect();
+  await NewsletterSubscriber.updateOne(
+    { email },
+    { $setOnInsert: { email, subscribedAt: new Date(), source: "footer" } },
+    { upsert: true },
+  );
 
   return { status: "success", message: "You're on the list." };
 }

@@ -11,7 +11,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "promote-admin": "tsx scripts/promote-admin.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

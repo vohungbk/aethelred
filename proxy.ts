@@ -1,13 +1,20 @@
 import { auth } from "@/lib/auth";
 
 export default auth((req) => {
-  if (req.auth) return;
+  const { pathname, search } = req.nextUrl;
+  const isLoggedIn = Boolean(req.auth);
 
-  const loginUrl = new URL("/login", req.nextUrl);
-  loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname + req.nextUrl.search);
-  return Response.redirect(loginUrl);
+  if (!isLoggedIn) {
+    const loginUrl = new URL("/login", req.nextUrl);
+    loginUrl.searchParams.set("callbackUrl", pathname + search);
+    return Response.redirect(loginUrl);
+  }
+
+  if (pathname.startsWith("/admin") && req.auth?.user?.role !== "admin") {
+    return Response.redirect(new URL("/", req.nextUrl));
+  }
 });
 
 export const config = {
-  matcher: ["/account/:path*", "/checkout/:path*"],
+  matcher: ["/account/:path*", "/checkout/:path*", "/admin/:path*"],
 };
